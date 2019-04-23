@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>MyBillDetails</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    </head>
+    <body>
+        <!-- {{ data.a }} -->
+        <div class="container">
+            <h1>Electricity Bill Details</h1>
+
+
+        <table class="table table-dark">
+            <thead>
+            <tr>
+                 <th scope="col">Address</th>
+                  <th scope="col">consumerNo</th>
+                  <th scope="col">netPPDAmount</th>
+                  <th scope="col">promptPaymentDiscount</th>
+                  <th scope="col">dueDate</th>
+                  <th scope="col">consumptionUnits</th>
+                  <th scope="col">billMonth</th>
+                  <th scope="col">billDate</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for i in data %}
+            <!-- {{i}} -->
+            <tr>
+                    <td>{{i.add}}</td>
+                    <td>{{i.consumerNo}}</td>
+                    <td>{{i.netPPDAmount}}</td>
+                    <td>{{i.promptPaymentDiscount}}</td>
+                    <td>{{i.dueDate}}</td>
+                    <td>{{i.consumptionUnits}}</td>
+                    <td>{{i.billMonth}}</td>
+                    <td>{{i.billDate}}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% if total_bill %}
+        <h4>TOTAL BILL: Rs. {{total_bill}}/-</h4>
+        {% endif %}
+
+        </div>
+            <!-- <h3>{{i.netPPDAmount}}: {{i.promptPaymentDiscount}} {{i.dueDate}} {{i.consumptionUnits}} {{i.billMonth}} {{i.billDate}}</h3> -->
+    </body>
+</html>

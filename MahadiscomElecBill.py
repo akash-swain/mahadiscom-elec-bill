@@ -1,4 +1,5 @@
 import requests
+import json
 class MahdiscomElecBillDetail():
     """
     """
@@ -12,19 +13,16 @@ class MahdiscomElecBillDetail():
     def get_bill_detail(self):
         try:
             response = requests.post(self.url, data = self.cust_detail)
+            # print (response.status_code)
+            # print (dir(response))
         except Exception as e:
-            print (f"{str(e)}: {response.status_code}" )
+            print (f"{str(e)}")
         else:
             # print (response.status_code)
-            json_response = response.json()
+            json_response = json.loads(response.text)
+            # print (json_response)
             if json_response:
-                output_params = ["netPPDAmount", "promptPaymentDiscount", "dueDate", "consumptionUnits", "billMonth", "billDate"]
+                output_params = ["consumerNo", "netPPDAmount", "promptPaymentDiscount", "dueDate", "consumptionUnits", "billMonth", "billDate"]
                 filter_json_response = {k: v for k, v in json_response.items() if k in output_params}
                 return filter_json_response
             return {}
-
-
-cust_list = ("000091396297", "000098300210", "000091490978", "000091392551", "")
-for cust in cust_list:
-    user_object = MahdiscomElecBillDetail(cust, "4641", "4")
-    print (user_object.get_bill_detail())
