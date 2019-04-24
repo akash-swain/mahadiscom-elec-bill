@@ -26,3 +26,6 @@ class MahdiscomElecBillDetail():
                 filter_json_response = {k: v for k, v in json_response.items() if k in output_params}
                 return filter_json_response
             return {}
+
+a = MahdiscomElecBillDetail("000091396297", "4641", "4")
+print (a.get_bill_detail())
