@@ -29,7 +29,7 @@ SECRET_KEY = ')5+w!2ej*!c^d#*aup8rkum%0p&!3kqy(d^m(f#7w%=-9t2kj4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["mahaelecbill.herokuapp.com"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
