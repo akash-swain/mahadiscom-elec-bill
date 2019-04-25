@@ -11,7 +11,7 @@ class BillList(TemplateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(BillList, self).get_context_data(*args, **kwargs)
-        customer = {"Q/121": "000091396297","U/20": "000098300210","R/71-R": "000091490978","R/72-L": "000091392551"}
+        customer = {}#{"Q/121": "000091396297","U/20": "000098300210","R/71-R": "000091490978","R/72-L": "000091392551"}
         t = []
         total_bill = 0
         for add, cust in customer.items():
