@@ -22,7 +22,7 @@ class MahdiscomElecBillDetail():
             json_response = json.loads(response.text)
             # print (json_response)
             if json_response:
-                output_params = ["consumerNo", "netPPDAmount", "promptPaymentDiscount", "dueDate", "consumptionUnits", "billMonth", "billDate"]
+                output_params = ["consumerNo", "netPPDAmount", "promptPaymentDiscount", "dueDate", "consumptionUnits", "billMonth", "billDate", "billToBePaid"]
                 filter_json_response = {k: v for k, v in json_response.items() if k in output_params}
                 return filter_json_response
             return {}
