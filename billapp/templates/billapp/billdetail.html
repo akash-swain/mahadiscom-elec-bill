@@ -15,14 +15,15 @@
             <thead>
             <tr>
                  <th scope="col">Address</th>
-                  <th scope="col">consumerNo</th>
-                  <th scope="col">netPPDAmount</th>
-                  <th scope="col">promptPaymentDiscount</th>
-                  <th scope="col">dueDate</th>
-                  <th scope="col">consumptionUnits</th>
-                  <th scope="col">billMonth</th>
-                  <th scope="col">billDate</th>
-                  <th scope="col">billToBePaid</th>
+                  <th scope="col">Consumer No</th>
+                  <th scope="col">New Payablet</th>
+                  <th scope="col">Prompt Discount</th>
+                  <th scope="col">Prompt Payment date</th>
+                  <th scope="col">Due date</th>
+                  <th scope="col">Consumption Detail</th>
+                  <th scope="col">Month</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">To Be Paid</th>
                 </tr>
             </thead>
             <tbody>
@@ -33,6 +34,7 @@
                     <td>{{i.consumerNo}}</td>
                     <td>{{i.netPPDAmount}}</td>
                     <td>{{i.promptPaymentDiscount}}</td>
+                    <td>{{i.promptPaymentDate}}</td>
                     <td>{{i.dueDate}}</td>
                     <td>{{i.consumptionUnits}}</td>
                     <td>{{i.billMonth}}</td>
@@ -46,7 +48,12 @@
         <h4>TOTAL BILL: Rs. {{total_bill}}/-</h4>
         {% endif %}
 
+        <div>
+            <a class="btn btn-danger" href="{% url 'logout' %}" role="button">LOGOUT</a>
         </div>
+
+        </div>
+
             <!-- <h3>{{i.netPPDAmount}}: {{i.promptPaymentDiscount}} {{i.dueDate}} {{i.consumptionUnits}} {{i.billMonth}} {{i.billDate}}</h3> -->
     </body>
 </html>

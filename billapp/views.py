@@ -4,10 +4,14 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from MahadiscomElecBill import MahdiscomElecBillDetail
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import View
+from django.urls import reverse_lazy
 # Create your views here.
 
 class BillList(LoginRequiredMixin, TemplateView):
     template_name = "billapp/billdetail.html"
+    login_url = '/login/'
+    redirect_field_name = reverse_lazy("detail")
 
 
     def get_context_data(self, *args, **kwargs):
@@ -28,4 +32,7 @@ class BillList(LoginRequiredMixin, TemplateView):
         return context
 
 
-            # print (user_object.get_bill_detail())
+
+
+class ThanksPage(TemplateView):
+    template_name = "billapp/logout.html"
