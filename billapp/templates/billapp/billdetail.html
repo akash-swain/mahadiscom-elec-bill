@@ -12,9 +12,9 @@
 
 
         <table class="table table-dark">
+            {% if data %}
             <thead>
             <tr>
-                 <th scope="col">Address</th>
                   <th scope="col">Consumer No</th>
                   <th scope="col">New Payable</th>
                   <th scope="col">Prompt Discount</th>
@@ -30,7 +30,6 @@
             {% for i in data %}
             <!-- {{i}} -->
             <tr>
-                    <td>{{i.add}}</td>
                     <td>{{i.consumerNo}}</td>
                     <td>{{i.netPPDAmount}}</td>
                     <td>{{i.promptPaymentDiscount}}</td>
@@ -42,12 +41,15 @@
                     <td>{{i.billToBePaid}}</td>
             </tr>
             {% endfor %}
+
             </tbody>
         </table>
         {% if total_bill %}
         <h4>TOTAL BILL: Rs. {{total_bill}}/-</h4>
         {% endif %}
-
+        {% else %}
+            <h5>No bills mapped/identified to User - {{user}}</h5>
+        {% endif %}
         <div>
             <a class="btn btn-danger" href="{% url 'logout' %}" role="button">LOGOUT</a>
         </div>

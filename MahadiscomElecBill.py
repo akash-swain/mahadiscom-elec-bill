@@ -24,7 +24,7 @@ class MahdiscomElecBillDetail():
             print (f"{str(e)}")
         else:
             json_response = json.loads(response.text)
-            if json_response:
+            if isinstance(json_response, dict):
                 pattern = r"\d{10}"
                 # print (json_response["promptPaymentDate"])
                 result = re.findall(pattern, json_response.get("promptPaymentDate","Unable to fetch"))
