@@ -57,20 +57,20 @@ def signup(request):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Activate your Electricity bill account'
             # message = render_to_string('billapp/acc_active_email.html', {
             #     'user': user,
             #     'domain': current_site.domain,
             #     'uid':urlsafe_base64_encode(force_bytes(user.pk)).decode(),
             #     'token':account_activation_token.make_token(user),
             # })
-            message = f"Hi {user}, \n Please click below link to activate your account:  \n http://{current_site.domain}/activate/{urlsafe_base64_encode(force_bytes(user.pk)).decode()}/{account_activation_token.make_token(user)}"
+            message = f"Hi {user}, \n Please click below link to activate your account:  \n http://{current_site.domain}/activate/{urlsafe_base64_encode(force_bytes(user.pk)).decode()}/{account_activation_token.make_token(user)} \n \n Thanks, \n Akash Swain"
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(
                         mail_subject, message, to=[to_email]
             )
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            return HttpResponse(f'Thanks {user} \n Please check your mailbox and verify your account - {to_email}')
     else:
         form = SignupForm()
     return render(request, 'billapp/signup.html', {'form': form})
@@ -88,6 +88,6 @@ def activate(request, uidb64, token):
         user.save()
         login(request, user)
         # return redirect('home')
-        return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+        return HttpResponse(f'Thank you for your email confirmation. Login - {get_current_site(request).domain}.')
     else:
         return HttpResponse('Activation link is invalid!')
