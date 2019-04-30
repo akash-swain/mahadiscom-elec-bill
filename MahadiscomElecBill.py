@@ -14,6 +14,8 @@ class MahdiscomElecBillDetail():
         self.url = "https://wss.mahadiscom.in/wss/wss?uiActionName=postViewPayBill&IsAjax=true"
 
     def get_bill_detail(self):
+        """
+        """
         try:
             response = requests.post(self.url, data = self.cust_detail)
             # print (response.status_code)
