@@ -19,15 +19,16 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
+with open ("config.txt") as f:
+    config_data = eval(f.read())
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ')5+w!2ej*!c^d#*aup8rkum%0p&!3kqy(d^m(f#7w%=-9t2kj4'
+SECRET_KEY = config_data["SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config_data["DEBUG"]
 
 ALLOWED_HOSTS = []
 
@@ -130,11 +131,11 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'akashbilldisplay@gmail.com'
-EMAIL_HOST_PASSWORD = 'swain!akash1'
-EMAIL_PORT = 587
+EMAIL_USE_TLS = config_data["EMAIL_USE_TLS"]
+EMAIL_HOST = config_data["EMAIL_HOST"]
+EMAIL_HOST_USER = config_data["EMAIL_HOST_USER"]
+EMAIL_HOST_PASSWORD = config_data["EMAIL_HOST_PASSWORD"]
+EMAIL_PORT = config_data["EMAIL_PORT"]
 
 LOGIN_REDIRECT_URL = "detail"
 LOGOUT_REDIRECT_URL = "detail"

@@ -1,0 +1,7 @@
+{"SECRET_KEY" : r")5+w!2ej*!c^d#*aup8rkum%0p&!3kqy(d^m(f#7w%=-9t2kj4",
+"DEBUG" : True,
+"EMAIL_USE_TLS": True,
+"EMAIL_HOST": 'smtp.gmail.com',
+"EMAIL_HOST_USER": 'akashbilldisplay@gmail.com',
+"EMAIL_HOST_PASSWORD": 'swain!akash1',
+"EMAIL_PORT": 587,}

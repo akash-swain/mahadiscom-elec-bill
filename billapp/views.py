@@ -34,7 +34,7 @@ class BillList(LoginRequiredMixin, TemplateView):
             obj_bill = MahdiscomElecBillDetail(cust, "4641", "4")
             data = obj_bill.get_bill_detail()
             data["add"] = add
-            total_bill += data["netPPDAmount"]
+            total_bill += data.get("netPPDAmount", 0)
             t.append(data)
         # print (t)
         context["data"] = t

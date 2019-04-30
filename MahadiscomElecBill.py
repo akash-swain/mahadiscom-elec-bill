@@ -25,7 +25,7 @@ class MahdiscomElecBillDetail():
             if json_response:
                 pattern = r"\d{10}"
                 # print (json_response["promptPaymentDate"])
-                result = re.findall(pattern, json_response["promptPaymentDate"])
+                result = re.findall(pattern, json_response.get("promptPaymentDate","Unable to fetch"))
                 json_response["promptPaymentDate"] = dt.date.fromtimestamp(int(result[0])).strftime('%d-%m-%Y') if result[0:] else 0
                 output_params = ["consumerNo", "netPPDAmount", "promptPaymentDiscount", "promptPaymentDate" ,"dueDate", "consumptionUnits", "billMonth", "billDate", "billToBePaid"]
                 filter_json_response = {k: v for k, v in json_response.items() if k in output_params}
