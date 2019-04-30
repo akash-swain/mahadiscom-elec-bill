@@ -1,0 +1,80 @@
+<!--
+  <h2>Sign up</h2>
+  <form method="post">
+    {% csrf_token %}
+      {% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="display: none">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+      {% endfor %}
+    <button type="submit">Sign up</button>
+  </form> -->
+
+
+  <!DOCTYPE html>
+  <html lang="en" dir="ltr">
+      <head>
+          <meta charset="utf-8">
+          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          <title>Signup</title>
+      </head>
+      <body>
+          <!-- <form method="post">
+  {% csrf_token %}
+  <table>
+  <tr>
+      <td>{{ form.username.label_tag }}</td>
+      <td>{{ form.username }}</td>
+  </tr>
+  <tr>
+      <td>{{ form.password.label_tag }}</td>
+      <td>{{ form.password }}</td>
+  </tr>
+  </table>
+
+  <input type="submit" value="login">
+  <input type="hidden" name="next" value="{{ next }}">
+  </form> -->
+
+
+  <!-- <form method="post">
+      {% csrf_token %}
+    <div class="form-group">
+      <label>Username</label>
+      <input type="text" class="form-control" placeholder="Enter Username">
+    </div>
+    <div class="form-group">
+        <label>Password</label>
+      <input type="password" class="form-control" placeholder="Password">
+    </div>
+    <input type="submit" value="Login" class="btn btn-primary">
+    <input type="hidden" name="next" value="{{ next }}">
+  </form> -->
+  {% load crispy_forms_tags %}
+          <div class="container">
+
+          <div class="content-section">
+              <form method="post">
+                  {%csrf_token%}
+                  <fieldset class = "form-group">
+                      <legend class="border-bottom mb-4">Welcome - Please Signup</legend>
+                      {{form|crispy}}
+                  </fieldset>
+                  <div class="form-group">
+                      <button type="submit" class="btn btn-outline-info">Sign Up</button>
+
+                  </div>
+              </form>
+          </div>
+
+          </div>
+
+      </body>
+  </html>

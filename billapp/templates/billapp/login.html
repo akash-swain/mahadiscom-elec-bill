@@ -48,12 +48,16 @@
                     {{form|crispy}}
                 </fieldset>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-outline-info">Sign In</button>
-
+                    <button type="submit" class="btn btn-outline-info">SIGN IN</button>
                 </div>
             </form>
         </div>
-
+        <div class="dropdown-divider"></div>
+          <!-- <a class="dropdown-item" href="#">New around here? Sign up</a> -->
+          <p class="text-muted">New to this website?</p>
+          <a class="btn btn-primary" href="{% url 'signup' %}" role="button">SIGN UP</a>
+          <!-- <a class="dropdown-item" href="#">Forgot password?</a> -->
+        </div>
         </div>
 
     </body>
