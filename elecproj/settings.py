@@ -130,6 +130,12 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'akashbilldisplay@gmail.com'
+EMAIL_HOST_PASSWORD = 'swain!akash1'
+EMAIL_PORT = 587
+
 LOGIN_REDIRECT_URL = "detail"
 LOGOUT_REDIRECT_URL = "detail"
 django_heroku.settings(locals())
