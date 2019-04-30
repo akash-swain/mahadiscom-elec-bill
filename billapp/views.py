@@ -22,7 +22,7 @@ from django.core.mail import EmailMessage
 class BillList(LoginRequiredMixin, TemplateView):
     template_name = "billapp/billdetail.html"
     login_url = '/login/'
-    redirect_field_name = reverse_lazy("detail")
+    # redirect_field_name = reverse_lazy("detail")
 
 
     def get_context_data(self, *args, **kwargs):
