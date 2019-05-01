@@ -23,7 +23,7 @@
             <thead>
             <tr>
                   <th scope="col">Consumer No</th>
-                  <th scope="col">New Payable</th>
+                  <th scope="col">Net Payable</th>
                   <th scope="col">Prompt Discount</th>
                   <th scope="col">Prompt Payment date</th>
                   <th scope="col">Due date</th>
@@ -31,6 +31,7 @@
                   <th scope="col">Month</th>
                   <th scope="col">Date</th>
                   <th scope="col">To Be Paid</th>
+                  <th scope="col">Delete</th>
                 </tr>
             </thead>
             <tbody>
@@ -46,6 +47,8 @@
                     <td>{{i.billMonth}}</td>
                     <td>{{i.billDate}}</td>
                     <td>{{i.billToBePaid}}</td>
+                    <td><a href="/delete/{{ i.consumerNo }}">Delete</a></td>
+                    <!-- <td>{{object_list}}</td> -->
             </tr>
             {% endfor %}
 
@@ -62,10 +65,10 @@
         <div class="row">
 
         <form class= "form-inline" method="post">{% csrf_token %}
-            <div class="col-auto">
+            <div class="grid">
 
-                <input class="form-control mb-2" type="text" name="content">
-                <button class="btn btn-primary mb-2" type="submit">Add</button>
+                <input class="form-control mb-2" type="text" name="content" placeholder="Consumer Number" required pattern="[0-9]+">
+                <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
             </div>
             </form>
             {% if messages %}

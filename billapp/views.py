@@ -99,6 +99,8 @@ class BillList(LoginRequiredMixin,ListView):
         else:
             messages.error(request, f'Consumer {post_data} already exists.')
             return redirect("detail")
+
+
     # def get(self, request, *args, **kwargs):
     #     # c1 = Todo.objects.get(id = id)
     #     # c1.delete()
@@ -113,6 +115,19 @@ class BillList(LoginRequiredMixin,ListView):
 class ThanksPage(TemplateView):
     template_name = "billapp/logout.html"
 
+
+def listdelete(request, consumerno):
+    try:
+        print (consumerno)
+        user = get_object_or_404(User, username=request.user.username)
+        print (user)
+        query = ConDetail.objects.get(consumerno=consumerno, consumer = user)
+        print (query)
+        query.delete()
+        return redirect("detail")
+    except Exception as e:
+        print (str(e))
+        return redirect("detail")
 
 def signup(request):
     if request.method == 'POST':
