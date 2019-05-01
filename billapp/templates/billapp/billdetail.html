@@ -8,7 +8,14 @@
     <body>
         <!-- {{ data.a }} -->
         <div class="container">
-            <h1>Electricity Bill Details</h1>
+            <div class="row">
+                <div class="col-md-6 ">
+                    <h1>Electricity Bill Details</h1>
+                </div>
+                <div class="col-md-2 offset-md-4">
+                    <a class="btn btn-danger" href="{% url 'logout' %}" role="button">LOGOUT</a>
+                </div>
+            </div>
 
 
         <table class="table table-dark">
@@ -45,16 +52,55 @@
             </tbody>
         </table>
         {% if total_bill %}
-        <h4>TOTAL BILL: Rs. {{total_bill}}/-</h4>
+        <h6>TOTAL BILL: Rs. {{total_bill}}/-</h6>
         {% endif %}
         {% else %}
             <h5>No bills mapped/identified to User - {{user}}</h5>
         {% endif %}
-        <div>
-            <a class="btn btn-danger" href="{% url 'logout' %}" role="button">LOGOUT</a>
-        </div>
+
+        <div class="dropdown-divider"></div>
+        <div class="row">
+
+        <form class= "form-inline" method="post">{% csrf_token %}
+            <div class="col-auto">
+
+                <input class="form-control mb-2" type="text" name="content">
+                <button class="btn btn-primary mb-2" type="submit">Add</button>
+            </div>
+            </form>
+            {% if messages %}
+        <!-- <ul class="messages"> -->
+            {% for message in messages %}
+             {% if message.tags == "error" %}
+             <!-- <div class="col-md-3"> -->
+                 <div class="col-md-6 alert alert-warning alert-dismissible fade show" role="alert">
+                  <strong>{{ message }}</strong>
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+            <!-- </div> -->
+            {% else %}
+                <div class="col-md-6 alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                 <strong>{{ message }}</strong>
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                   <span aria-hidden="true">&times;</span>
+                 </button>
+               </div>
+            {% endif %}
+            <!-- <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li> -->
+            {% endfor %}
+        <!-- </ul> -->
+            {% endif %}
+
 
         </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
 
             <!-- <h3>{{i.netPPDAmount}}: {{i.promptPaymentDiscount}} {{i.dueDate}} {{i.consumptionUnits}} {{i.billMonth}} {{i.billDate}}</h3> -->
     </body>

@@ -17,6 +17,7 @@ from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from .models import ConDetail
+from django.contrib import messages
 # Create your views here.
 
 # class BillList(LoginRequiredMixin, ListView):
@@ -57,11 +58,11 @@ class BillList(LoginRequiredMixin,ListView):
     def get_context_data(self, *args, **kwargs):
         context = super(BillList, self).get_context_data(*args, **kwargs)
         # print (context["object_list"])
-        customers = context["condetail_list"]
+        self.customers = context["condetail_list"]
         # print (customer)
         t = []
         total_bill = 0
-        for cust in customers:
+        for cust in self.customers:
             obj_bill = MahdiscomElecBillDetail(cust, "4641", "4")
             data = obj_bill.get_bill_detail()
             total_bill += data.get("netPPDAmount", 0)
@@ -78,6 +79,36 @@ class BillList(LoginRequiredMixin,ListView):
         consumer_list = ConDetail.objects.filter(consumer__username = user)
         return consumer_list
 
+    def post(self, request, *args, **kwargs):
+        user = get_object_or_404(User, username=self.request.user.username)
+        try:
+            post_data = request.POST["content"]
+            check_in_current = ConDetail.objects.get(consumerno = post_data, consumer = user)
+        except ConDetail.DoesNotExist:
+            obj_bill = MahdiscomElecBillDetail(post_data, "4641", "4")
+            data = obj_bill.get_bill_detail()
+            if data:
+                user = get_object_or_404(User, username=self.request.user.username)
+                c1 = ConDetail(consumerno = post_data, consumer = user)
+                c1.save()
+                # return redirect("detail")
+                messages.success(request, f'Consumer {post_data} added successfully.')
+                return redirect("detail")
+            messages.error(request, f'Consumer {post_data} is invalid.')
+            return redirect("detail")
+        else:
+            messages.error(request, f'Consumer {post_data} already exists.')
+            return redirect("detail")
+    # def get(self, request, *args, **kwargs):
+    #     # c1 = Todo.objects.get(id = id)
+    #     # c1.delete()
+    #     return redirect("detail")
+        # form = self.form_class(request.POST)
+        # if form.is_valid():
+        #     print (form)
+        #     # <process form cleaned data>
+        #     return HttpResponseRedirect('/success/')
+        # return render(request, self.template_name, {'form': form})
 
 class ThanksPage(TemplateView):
     template_name = "billapp/logout.html"
