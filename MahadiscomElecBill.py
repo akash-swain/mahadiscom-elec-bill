@@ -5,6 +5,7 @@ import datetime as dt
 
 class MahdiscomElecBillDetail():
     """
+    Get details of bill
     """
     def __init__(self, cust_no, bill_unit, consumer_type):
         self.cust_detail = {}
