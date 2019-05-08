@@ -60,16 +60,23 @@ class BillList(LoginRequiredMixin,ListView):
         # print (context["object_list"])
         self.customers = context["condetail_list"]
         # print (customer)
+        with open("bu_list.txt", "r") as f:
+            bu_list = eval(f.read())
+            # print (bu_list)
         t = []
         total_bill = 0
         for cust in self.customers:
             obj_bill = MahdiscomElecBillDetail(cust, "4641", "4")
             data = obj_bill.get_bill_detail()
-            total_bill += data.get("netPPDAmount", 0)
-            t.append(data)
+            try:
+                total_bill += data.get("netPPDAmount", 0)
+                t.append(data)
+            except Exception as e:
+                total_bill = 0
         # print (t)
         context["data"] = t
         context["total_bill"] = total_bill
+        context["bu"] = bu_list
         # print (context)
         return context
     # ordering = ["-date_posted"]
@@ -83,9 +90,10 @@ class BillList(LoginRequiredMixin,ListView):
         user = get_object_or_404(User, username=self.request.user.username)
         try:
             post_data = request.POST["content"]
+            area = request.POST["area"]
             check_in_current = ConDetail.objects.get(consumerno = post_data, consumer = user)
         except ConDetail.DoesNotExist:
-            obj_bill = MahdiscomElecBillDetail(post_data, "4641", "4")
+            obj_bill = MahdiscomElecBillDetail(post_data, area, "4")
             data = obj_bill.get_bill_detail()
             if data:
                 user = get_object_or_404(User, username=self.request.user.username)

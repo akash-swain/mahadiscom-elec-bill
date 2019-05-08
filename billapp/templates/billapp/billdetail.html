@@ -68,6 +68,13 @@
             <div class="grid">
 
                 <input class="form-control mb-2" type="text" name="content" placeholder="Consumer Number" required pattern="[0-9]+">
+                <!-- <input class="form-control mb-2" type="text" name="area" placeholder="Bill Unit Number" required pattern="[0-9]+"> -->
+                <select name="area" class="form-control mb-2">
+                    <option value="" selected disabled hidden >Select BU Number</option>
+                    {%for b, n in bu %}
+                        <option value={{n}}>{{b}}</option>
+                    {% endfor %}
+                </select>
                 <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
             </div>
             </form>
@@ -106,5 +113,9 @@
 
 
             <!-- <h3>{{i.netPPDAmount}}: {{i.promptPaymentDiscount}} {{i.dueDate}} {{i.consumptionUnits}} {{i.billMonth}} {{i.billDate}}</h3> -->
+            <!-- {%for b, n in bu %}
+                <p>{{b}}</p>
+                <p>{{n}}</p>
+            {% endfor %} -->
     </body>
 </html>
