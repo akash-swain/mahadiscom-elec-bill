@@ -118,11 +118,11 @@ class ThanksPage(TemplateView):
 
 def listdelete(request, consumerno):
     try:
-        print (consumerno)
+        # print (consumerno)
         user = get_object_or_404(User, username=request.user.username)
-        print (user)
+        # print (user)
         query = ConDetail.objects.get(consumerno=consumerno, consumer = user)
-        print (query)
+        # print (query)
         query.delete()
         return redirect("detail")
     except Exception as e:
