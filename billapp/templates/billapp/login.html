@@ -6,37 +6,7 @@
         <title>Login</title>
     </head>
     <body>
-        <!-- <form method="post">
-{% csrf_token %}
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
-
-<input type="submit" value="login">
-<input type="hidden" name="next" value="{{ next }}">
-</form> -->
-
-
-<!-- <form method="post">
-    {% csrf_token %}
-  <div class="form-group">
-    <label>Username</label>
-    <input type="text" class="form-control" placeholder="Enter Username">
-  </div>
-  <div class="form-group">
-      <label>Password</label>
-    <input type="password" class="form-control" placeholder="Password">
-  </div>
-  <input type="submit" value="Login" class="btn btn-primary">
-  <input type="hidden" name="next" value="{{ next }}">
-</form> -->
+ 
 {% load crispy_forms_tags %}
         <div class="container">
 
@@ -48,14 +18,14 @@
                     {{form|crispy}}
                 </fieldset>
                 <div class="form-group">
-                    <button type="submit" class="btn btn-outline-info">SIGN IN</button>
+                    <button type="submit" class="btn btn-success">Sign In</button>
+                    <a href="{% url 'password_reset'  %}" role = "button" class="btn btn-info">Forgot password</a>
                 </div>
             </form>
-        </div>
         <div class="dropdown-divider"></div>
           <!-- <a class="dropdown-item" href="#">New around here? Sign up</a> -->
           <p class="text-muted">New to this website?</p>
-          <a class="btn btn-primary" href="{% url 'signup' %}" role="button">SIGN UP</a>
+          <a class="btn btn-outline-danger" href="{% url 'signup' %}" role="button">Sign Up</a>
           <!-- <a class="dropdown-item" href="#">Forgot password?</a> -->
         </div>
         </div>
