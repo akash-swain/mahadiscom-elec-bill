@@ -18,7 +18,7 @@ class MahdiscomElecBillDetail():
         """
         try:
             response = requests.post(self.url, data = self.cust_detail)
-            # print (response.status_code)
+            print (response.status_code)
             # print (dir(response))
         except Exception as e:
             print (f"{str(e)}")
@@ -33,3 +33,9 @@ class MahdiscomElecBillDetail():
                 filter_json_response = {k: v for k, v in json_response.items() if k in output_params}
                 return filter_json_response
             return {}
+
+
+
+
+aa = MahdiscomElecBillDetail("700006278711", "4703", "4")
+print (aa.get_bill_detail())
