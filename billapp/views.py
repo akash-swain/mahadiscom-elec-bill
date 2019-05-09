@@ -120,8 +120,8 @@ class BillList(LoginRequiredMixin,ListView):
         #     return HttpResponseRedirect('/success/')
         # return render(request, self.template_name, {'form': form})
 
-class ThanksPage(TemplateView):
-    template_name = "billapp/logout.html"
+# class ThanksPage(TemplateView):
+#     template_name = "billapp/logout.html"
 
 
 def listdelete(request, consumerno):
@@ -134,7 +134,7 @@ def listdelete(request, consumerno):
         query.delete()
         return redirect("detail")
     except Exception as e:
-        print (str(e))
+        # print (str(e))
         return redirect("detail")
 
 def signup(request):

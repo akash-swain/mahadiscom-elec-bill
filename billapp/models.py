@@ -6,7 +6,7 @@ class ConDetail(models.Model):
     consumer = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.consumerno
+        return (self.consumer, self.consumerno)
 
     def get_absolute_url(self):
         return reverse("detail")
