@@ -2,6 +2,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from MahadiscomElecBill import MahdiscomElecBillDetail
+from NmmcWaterBill import GetNmmcWaterBill
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.urls import reverse_lazy
@@ -16,7 +17,7 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-from .models import ConDetail
+from .models import ConDetail, ConDetailWater
 from django.contrib import messages
 # Create your views here.
 
@@ -57,8 +58,11 @@ class BillList(LoginRequiredMixin,ListView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(BillList, self).get_context_data(*args, **kwargs)
-        # print (context["object_list"])
-        self.customers = context["condetail_list"]
+        # print (context["object_list"][0])
+        # self.customers = context["condetail_list"]
+        self.customers = context["object_list"][0]
+        # self.customer_water = context["consumer_list_water"]
+        self.customer_water = context["object_list"][1]
         # print (customer)
         with open("bu_list.txt", "r") as f:
             bu_list = eval(f.read())
@@ -73,9 +77,23 @@ class BillList(LoginRequiredMixin,ListView):
                 t.append(data)
             except Exception as e:
                 total_bill = 0
+        
+        # water bill fetch
+        w = []
+        total_bill_water = 0
+        for cust in self.customer_water:
+            obj_bill_water = GetNmmcWaterBill(cust)
+            data_water = obj_bill_water.getwaterbill()
+            try:
+                total_bill_water += float(data_water.get("Outstanding", 0))
+                w.append(data_water)
+            except Exception as e:
+                total_bill_water = 0
         # print (t)
         context["data"] = t
+        context["data_water"] = w 
         context["total_bill"] = total_bill
+        context["total_bill_water"] = total_bill_water
         context["bu"] = bu_list
         # print (context)
         return context
@@ -84,30 +102,66 @@ class BillList(LoginRequiredMixin,ListView):
     def get_queryset(self):
         user = get_object_or_404(User, username=self.request.user.username)
         consumer_list = ConDetail.objects.filter(consumer__username = user)
-        return consumer_list
+        consumer_list_water = ConDetailWater.objects.filter(consumer__username = user)
+
+        return consumer_list , consumer_list_water
+
 
     def post(self, request, *args, **kwargs):
         user = get_object_or_404(User, username=self.request.user.username)
-        try:
-            post_data = request.POST["content"]
-            area = request.POST["area"]
-            check_in_current = ConDetail.objects.get(consumerno = post_data, consumer = user)
-        except ConDetail.DoesNotExist:
-            obj_bill = MahdiscomElecBillDetail(post_data, area, "4")
-            data = obj_bill.get_bill_detail()
-            if data:
-                user = get_object_or_404(User, username=self.request.user.username)
-                c1 = ConDetail(consumerno = post_data, consumer = user)
-                c1.save()
-                # return redirect("detail")
-                messages.success(request, f'Consumer {post_data} added successfully.')
-                return redirect("detail")
-            messages.error(request, f'Consumer {post_data} is invalid.')
-            return redirect("detail")
-        else:
-            messages.error(request, f'Consumer {post_data} already exists.')
-            return redirect("detail")
 
+        get_form = request.POST.get("content", "invalid-form")
+        if get_form == "invalid-form":
+            get_form = request.POST.get("content_water", "invalid-form")
+            if get_form == "invalid-form":
+                print ("incorrect form data")
+            else:
+                form_flag = "content_water"    
+        else:
+            form_flag = "content"
+
+        if form_flag == "content":
+            try:
+                post_data = request.POST["content"]
+                area = request.POST["area"]
+                check_in_current = ConDetail.objects.get(consumerno = post_data, consumer = user)
+            except ConDetail.DoesNotExist:
+                obj_bill = MahdiscomElecBillDetail(post_data, area, "4")
+                data = obj_bill.get_bill_detail()
+                if data:
+                    user = get_object_or_404(User, username=self.request.user.username)
+                    c1 = ConDetail(consumerno = post_data, consumer = user)
+                    c1.save()
+                    # return redirect("detail")
+                    messages.success(request, f'Consumer {post_data} added successfully.', extra_tags='electricity')
+                    return redirect("detail")
+                messages.error(request, f'Consumer {post_data} is invalid.', extra_tags='electricity')
+                return redirect("detail")
+            else:
+                messages.error(request, f'Consumer {post_data} already exists.', extra_tags='electricity')
+                return redirect("detail")
+
+
+        # Added for Water Bill
+        if form_flag == "content_water":
+            try:
+                post_data = request.POST["content_water"]
+                check_in_current = ConDetailWater.objects.get(consumerno = post_data, consumer = user)
+            except ConDetailWater.DoesNotExist:
+                obj_bill_water = GetNmmcWaterBill(post_data)
+                data = obj_bill_water.getwaterbill()
+                if data:
+                    user = get_object_or_404(User, username=self.request.user.username)
+                    c1 = ConDetailWater(consumerno = post_data, consumer = user)
+                    c1.save()
+                    # return redirect("detail")
+                    messages.success(request, f'Consumer {post_data} added successfully.', extra_tags='water')
+                    return redirect("detail")
+                messages.error(request, f'Consumer {post_data} is invalid.', extra_tags='water')
+                return redirect("detail")
+            else:
+                messages.error(request, f'Consumer {post_data} already exists.', extra_tags='water')
+                return redirect("detail")
 
     # def get(self, request, *args, **kwargs):
     #     # c1 = Todo.objects.get(id = id)
@@ -136,6 +190,20 @@ def listdelete(request, consumerno):
     except Exception as e:
         # print (str(e))
         return redirect("detail")
+
+def listdeletewater(request, consumerno):
+    try:
+        # print (consumerno)
+        user = get_object_or_404(User, username=request.user.username)
+        # print (user)
+        query = ConDetailWater.objects.get(consumerno=consumerno, consumer = user)
+        # print (query)
+        query.delete()
+        return redirect("detail")
+    except Exception as e:
+        # print (str(e))
+        return redirect("detail")
+
 
 def signup(request):
     if request.method == 'POST':

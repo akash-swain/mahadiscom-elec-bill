@@ -37,5 +37,5 @@ class MahdiscomElecBillDetail():
 
 
 
-aa = MahdiscomElecBillDetail("700006278711", "4703", "4")
-print (aa.get_bill_detail())
+# aa = MahdiscomElecBillDetail("700006278711", "4703", "4")
+# print (aa.get_bill_detail())
