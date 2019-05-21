@@ -1,233 +1,293 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
+{% extends "billapp/base.html" %}
+<!-- {{ data.a }} -->
 
-<head>
-    <meta charset="utf-8">
-    <title>MyBillDetails</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-</head>
+{% block content %}
 
-<body>
-    <!-- {{ data.a }} -->
-    <div class="container">
-        <div class="row">
-            <div class="col-md-6 ">
-                <h1>Electricity Bill Details</h1>
-            </div>
-            <div class="col-md-2 offset-md-4">
-                <a class="btn btn-danger" href="{% url 'logout' %}" role="button">LOGOUT</a>
-            </div>
-        </div>
-
-
-        <table class="table table-dark">
-            {% if data %}
-            <thead>
-                <tr>
-                    <th scope="col">Consumer No</th>
-                    <th scope="col">Net Payable</th>
-                    <th scope="col">Prompt Discount</th>
-                    <th scope="col">Prompt Payment date</th>
-                    <th scope="col">Due date</th>
-                    <th scope="col">Units</th>
-                    <th scope="col">Month</th>
-                    <th scope="col">Date</th>
-                    <th scope="col">To Be Paid</th>
-                    <th scope="col">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in data %}
-                <!-- {{i}} -->
-                <tr>
-                    <td>{{i.consumerNo}}</td>
-                    <td>{{i.netPPDAmount}}</td>
-                    <td>{{i.promptPaymentDiscount}}</td>
-                    <td>{{i.promptPaymentDate}}</td>
-                    <td>{{i.dueDate}}</td>
-                    <td>{{i.consumptionUnits}}</td>
-                    <td>{{i.billMonth}}</td>
-                    <td>{{i.billDate}}</td>
-                    <td>{{i.billToBePaid}}</td>
-                    <td><a href="/delete/{{ i.consumerNo }}">Delete</a></td>
-                    <!-- <td>{{object_list}}</td> -->
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-        {% if total_bill %}
-        <h6>TOTAL BILL: Rs. {{total_bill}}/-</h6>
-        {% endif %}
-        {% else %}
-        <h5>Welcome {{user}} - To get electricity bill please add consumer details below. </h5>
-        {% endif %}
-
-        <div class="dropdown-divider"></div>
-        <div class="row">
-
-            <form class="form-inline" method="post">{% csrf_token %}
-                <div class="grid">
-
-                    <input class="form-control mb-2" type="text" name="content" placeholder="Consumer Number" required
-                        pattern="[0-9]+">
-                    <!-- <input class="form-control mb-2" type="text" name="area" placeholder="Bill Unit Number" required pattern="[0-9]+"> -->
-                    <select name="area" class="form-control mb-2">
-                        <option value="" selected disabled hidden>Select BU Number</option>
-                        {%for b, n in bu %}
-                        <option value={{n}}>{{b}}</option>
-                        {% endfor %}
-                    </select>
-                    <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
-                </div>
-            </form>
-            {% if messages %}
-            <!-- <ul class="messages"> -->
-            {% for message in messages %}
-
-            {%if "electricity" in message.tags %}
-            {% if "error" in message.tags  %}
-            <!-- <div class="col-md-3"> -->
-            <div class="col-md-6 alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <!-- </div> -->
-            {% else %}
-            <div class="col-md-6 alert alert-success alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            {% endif %}
-            {% endif %}
-            <!-- <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li> -->
-            {% endfor %}
-            <!-- </ul> -->
-            {% endif %}
-
-
-        </div>
-
-
-        <!-- ************************************************************************************** -->
-        <!-- code for water bill -->
-        <br>
-        <hr style="height:3px;border:none;color:#333;background-color:#333;" />
-
-        <div class="row">
-            <div class="col-md-6 ">
-                <h1>Water Bill Details</h1>
-            </div>
-        </div>
-
-
-        <table class="table table-dark">
-            {% if data_water %}
-            <thead>
-                <tr>
-                    <th scope="col">Consumer No</th>
-                    <th scope="col">Consumer Name</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">Due Date</th>
-                    <th scope="col">Outstanding</th>
-                    <th scope="col">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for i in data_water %}
-                <!-- {{i}} -->
-                <tr>
-                    <td>{{i.ConsumerNumberWater}}</td>
-                    <td>{{i.ConsumerName}}</td>
-                    <td>{{i.ConnectionAddress}}</td>
-                    <td>{{i.DueDate}}</td>
-                    <td>{{i.Outstanding}}</td>
-                    <td><a href="/delete_water/{{ i.ConsumerNumberWater }}">Delete</a></td>
-                    <!-- <td>{{object_list}}</td> -->
-                </tr>
-                {% endfor %}
-
-            </tbody>
-        </table>
-
-        {% if total_bill_water %}
-        <h6>TOTAL BILL: Rs. {{total_bill_water}}/-</h6>
-        {% endif %}
-        {% else %}
-        <h5>Welcome {{user}} - To get water bill please add consumer details below</h5>
-        {% endif %}
-
-
-
-
-        <div class="dropdown-divider"></div>
-        <div class="row">
-
-            <form class="form-inline" method="post">{% csrf_token %}
-                <div class="grid">
-
-                    <input class="form-control mb-2" type="text" name="content_water" placeholder="Consumer Number"
-                        required pattern="[0-9]+">
-                    <!-- <input class="form-control mb-2" type="text" name="area" placeholder="Bill Unit Number" required pattern="[0-9]+"> -->
-                    <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
-                </div>
-            </form>
-            {% if messages %}
-            <!-- <ul class="messages"> -->
-            {% for message in messages %}
-            {% if "water" in message.tags %}
-            {% if "error" in message.tags %}
-            <!-- <div class="col-md-3"> -->
-            <div class="col-md-6 alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <!-- </div> -->
-            {% else %}
-            <div class="col-md-6 alert alert-success alert-dismissible fade show" role="alert">
-                <strong>{{ message }}</strong>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            {% endif %}
-            {% endif %}
-            <!-- <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li> -->
-            {% endfor %}
-            <!-- </ul> -->
-            {% endif %}
-
-
-        </div>
-
-
+<div class="row">
+    <div class="col-md-6 ">
+        <h1>Electricity Bill Details</h1>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
-        crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
+</div>
 
 
-    <!-- <h3>{{i.netPPDAmount}}: {{i.promptPaymentDiscount}} {{i.dueDate}} {{i.consumptionUnits}} {{i.billMonth}} {{i.billDate}}</h3> -->
-    <!-- {%for b, n in bu %}
-                <p>{{b}}</p>
-                <p>{{n}}</p>
-            {% endfor %} -->
-    <!-- {{data_water}} -->
+<table class="table table-dark">
+    {% if data %}
+    <thead>
+        <tr>
+            <th scope="col">Consumer No</th>
+            <th scope="col">Net Payable</th>
+            <th scope="col">Prompt Discount</th>
+            <th scope="col">Prompt Payment date</th>
+            <th scope="col">Due date</th>
+            <th scope="col">Units</th>
+            <th scope="col">Month</th>
+            <th scope="col">Date</th>
+            <th scope="col">To Be Paid</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in data %}
+        <!-- {{i}} -->
+        <tr>
+            <td>{{i.consumerNo}}</td>
+            <td>{{i.netPPDAmount}}</td>
+            <td>{{i.promptPaymentDiscount}}</td>
+            <td>{{i.promptPaymentDate}}</td>
+            <td>{{i.dueDate}}</td>
+            <td>{{i.consumptionUnits}}</td>
+            <td>{{i.billMonth}}</td>
+            <td>{{i.billDate}}</td>
+            <td>{{i.billToBePaid}}</td>
+            <td><a href="/delete/{{ i.consumerNo }}">Delete</a></td>
+            <!-- <td>{{object_list}}</td> -->
+        </tr>
+        {% endfor %}
 
-</body>
+    </tbody>
+</table>
+{% if total_bill %}
+<h6>TOTAL BILL: Rs. {{total_bill}}/-</h6>
+{% endif %}
+{% else %}
+<h5>Welcome {{user}} - To get electricity bill please add consumer details below. </h5>
+{% endif %}
 
-</html>
+<div class="dropdown-divider"></div>
+<div class="row">
+
+    <form class="form-inline" method="post">{% csrf_token %}
+        <div class="grid">
+
+            <input class="form-control mb-2" type="text" name="content" placeholder="Consumer Number" required
+                pattern="[0-9]+">
+            <!-- <input class="form-control mb-2" type="text" name="area" placeholder="Bill Unit Number" required pattern="[0-9]+"> -->
+            <select name="area" class="form-control mb-2">
+                <option value="" selected disabled hidden>Select BU Number</option>
+                {%for b, n in bu %}
+                <option value={{n}}>{{b}}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
+        </div>
+    </form>
+    {% if messages %}
+    <!-- <ul class="messages"> -->
+    {% for message in messages %}
+
+    {%if "electricity" in message.tags %}
+    {% if "error" in message.tags  %}
+    <!-- <div class="col-md-3"> -->
+    <div class="col-md-6 alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!-- </div> -->
+    {% else %}
+    <div class="col-md-6 alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% endif %}
+    <!-- <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li> -->
+    {% endfor %}
+    <!-- </ul> -->
+    {% endif %}
+
+
+</div>
+
+
+<!-- ************************************************************************************** -->
+<!-- code for water bill -->
+<br>
+<hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
+<div class="row">
+    <div class="col-md-6 ">
+        <h1>Water Bill Details</h1>
+    </div>
+</div>
+
+
+<table class="table table-dark">
+    {% if data_water %}
+    <thead>
+        <tr>
+            <th scope="col">Consumer No</th>
+            <th scope="col">Consumer Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Outstanding</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in data_water %}
+        <!-- {{i}} -->
+        <tr>
+            <td>{{i.ConsumerNumberWater}}</td>
+            <td>{{i.ConsumerName}}</td>
+            <td>{{i.ConnectionAddress}}</td>
+            <td>{{i.DueDate}}</td>
+            <td>{{i.Outstanding}}</td>
+            <td><a href="/delete_water/{{ i.ConsumerNumberWater }}">Delete</a></td>
+            <!-- <td>{{object_list}}</td> -->
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+{% if total_bill_water %}
+<h6>TOTAL BILL: Rs. {{total_bill_water}}/-</h6>
+{% endif %}
+{% else %}
+<h5>Welcome {{user}} - To get water bill please add consumer details below</h5>
+{% endif %}
+
+
+
+
+<div class="dropdown-divider"></div>
+<div class="row">
+
+    <form class="form-inline" method="post">{% csrf_token %}
+        <div class="grid">
+
+            <input class="form-control mb-2" type="text" name="content_water" placeholder="Consumer Number" required
+                pattern="[0-9]+">
+            <!-- <input class="form-control mb-2" type="text" name="area" placeholder="Bill Unit Number" required pattern="[0-9]+"> -->
+            <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
+        </div>
+    </form>
+    {% if messages %}
+    <!-- <ul class="messages"> -->
+    {% for message in messages %}
+    {% if "water" in message.tags %}
+    {% if "error" in message.tags %}
+    <!-- <div class="col-md-3"> -->
+    <div class="col-md-6 alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!-- </div> -->
+    {% else %}
+    <div class="col-md-6 alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% endif %}
+    <!-- <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li> -->
+    {% endfor %}
+    <!-- </ul> -->
+    {% endif %}
+
+
+</div>
+
+<!-- ************************************************************************************** -->
+<!-- code for property bill -->
+<br>
+<hr style="height:3px;border:none;color:#333;background-color:#333;" />
+
+<div class="row">
+    <div class="col-md-6 ">
+        <h1>Property Bill Details</h1>
+    </div>
+</div>
+
+
+<table class="table table-dark">
+    {% if data_property %}
+    <thead>
+        <tr>
+            <th scope="col">Consumer No</th>
+            <th scope="col">Consumer Name</th>
+            <th scope="col">Address</th>
+            <th scope="col">Outstanding</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for i in data_property %}
+        <!-- {{i}} -->
+        <tr>
+            <td>{{i.ConsumerNumberProperty}}</td>
+            <td>{{i.OwnerName}}</td>
+            <td>{{i.Address}}</td>
+            <td>{{i.Outstanding}}</td>
+            <td><a href="/delete_property/{{ i.ConsumerNumberProperty }}">Delete</a></td>
+            <!-- <td>{{object_list}}</td> -->
+        </tr>
+        {% endfor %}
+
+    </tbody>
+</table>
+
+{% if total_bill_property %}
+<h6>TOTAL BILL: Rs. {{total_bill_property}}/-</h6>
+{% endif %}
+{% else %}
+<h5>Welcome {{user}} - To get property bill please add consumer details below</h5>
+{% endif %}
+
+
+
+
+<div class="dropdown-divider"></div>
+<div class="row">
+
+    <form class="form-inline" method="post">{% csrf_token %}
+        <div class="grid">
+
+            <input class="form-control mb-2" type="text" name="content_property" placeholder="Consumer Number" required
+                pattern="[a-zA-Z0-9]+">
+            <!-- <input class="form-control mb-2" type="text" name="area" placeholder="Bill Unit Number" required pattern="[0-9]+"> -->
+            <button class="btn btn-primary mb-2" type="submit">Add Consumer</button>
+        </div>
+    </form>
+    {% if messages %}
+    <!-- <ul class="messages"> -->
+    {% for message in messages %}
+    {% if "property" in message.tags %}
+    {% if "error" in message.tags %}
+    <!-- <div class="col-md-3"> -->
+    <div class="col-md-6 alert alert-warning alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <!-- </div> -->
+    {% else %}
+    <div class="col-md-6 alert alert-success alert-dismissible fade show" role="alert">
+        <strong>{{ message }}</strong>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    {% endif %}
+    {% endif %}
+    <!-- <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li> -->
+    {% endfor %}
+    <!-- </ul> -->
+    {% endif %}
+
+
+</div>
+
+
+
+
+{% endblock %}

@@ -3,6 +3,7 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from MahadiscomElecBill import MahdiscomElecBillDetail
 from NmmcWaterBill import GetNmmcWaterBill
+from NmmcTaxBill import GetNmmcPropertyBill
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import View
 from django.urls import reverse_lazy
@@ -17,7 +18,7 @@ from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
-from .models import ConDetail, ConDetailWater
+from .models import ConDetail, ConDetailWater, ConDetailProperty
 from django.contrib import messages
 # Create your views here.
 
@@ -63,6 +64,7 @@ class BillList(LoginRequiredMixin,ListView):
         self.customers = context["object_list"][0]
         # self.customer_water = context["consumer_list_water"]
         self.customer_water = context["object_list"][1]
+        self.customer_property = context["object_list"][2]
         # print (customer)
         with open("bu_list.txt", "r") as f:
             bu_list = eval(f.read())
@@ -89,11 +91,27 @@ class BillList(LoginRequiredMixin,ListView):
                 w.append(data_water)
             except Exception as e:
                 total_bill_water = 0
+
+
+        # property bill fetch
+        p = []
+        total_bill_property = 0
+        for cust in self.customer_property:
+            obj_bill_property = GetNmmcPropertyBill(cust)
+            data_property = obj_bill_property.getpropertybill()
+            try:
+                total_bill_property += float(data_property.get("Outstanding", 0))
+                p.append(data_property)
+            except Exception as e:
+                total_bill_property = 0
+
         # print (t)
         context["data"] = t
         context["data_water"] = w 
+        context["data_property"] = p
         context["total_bill"] = total_bill
         context["total_bill_water"] = total_bill_water
+        context["total_bill_property"] = total_bill_property
         context["bu"] = bu_list
         # print (context)
         return context
@@ -103,8 +121,9 @@ class BillList(LoginRequiredMixin,ListView):
         user = get_object_or_404(User, username=self.request.user.username)
         consumer_list = ConDetail.objects.filter(consumer__username = user)
         consumer_list_water = ConDetailWater.objects.filter(consumer__username = user)
+        consumer_list_property = ConDetailProperty.objects.filter(consumer__username = user)
 
-        return consumer_list , consumer_list_water
+        return consumer_list , consumer_list_water, consumer_list_property
 
 
     def post(self, request, *args, **kwargs):
@@ -114,7 +133,11 @@ class BillList(LoginRequiredMixin,ListView):
         if get_form == "invalid-form":
             get_form = request.POST.get("content_water", "invalid-form")
             if get_form == "invalid-form":
-                print ("incorrect form data")
+                get_form = request.POST.get("content_property", "invalid-form")
+                if get_form == "invalid-form":
+                    print ("incorrect form data")
+                else:
+                    form_flag = "content_property"    
             else:
                 form_flag = "content_water"    
         else:
@@ -163,6 +186,28 @@ class BillList(LoginRequiredMixin,ListView):
                 messages.error(request, f'Consumer {post_data} already exists.', extra_tags='water')
                 return redirect("detail")
 
+
+        # Added for Property Bill
+        if form_flag == "content_property":
+            try:
+                post_data = request.POST["content_property"]
+                check_in_current = ConDetailProperty.objects.get(consumerno = post_data, consumer = user)
+            except ConDetailProperty.DoesNotExist:
+                obj_bill_property = GetNmmcPropertyBill(post_data)
+                data = obj_bill_property.getpropertybill()
+                if data:
+                    user = get_object_or_404(User, username=self.request.user.username)
+                    c1 = ConDetailProperty(consumerno = post_data, consumer = user)
+                    c1.save()
+                    # return redirect("detail")
+                    messages.success(request, f'Consumer {post_data} added successfully.', extra_tags='property')
+                    return redirect("detail")
+                messages.error(request, f'Consumer {post_data} is invalid.', extra_tags='property')
+                return redirect("detail")
+            else:
+                messages.error(request, f'Consumer {post_data} already exists.', extra_tags='property')
+                return redirect("detail")
+
     # def get(self, request, *args, **kwargs):
     #     # c1 = Todo.objects.get(id = id)
     #     # c1.delete()
@@ -204,6 +249,19 @@ def listdeletewater(request, consumerno):
         # print (str(e))
         return redirect("detail")
 
+
+def listdeleteproperty(request, consumerno):
+    try:
+        # print (consumerno)
+        user = get_object_or_404(User, username=request.user.username)
+        # print (user)
+        query = ConDetailProperty.objects.get(consumerno=consumerno, consumer = user)
+        # print (query)
+        query.delete()
+        return redirect("detail")
+    except Exception as e:
+        # print (str(e))
+        return redirect("detail")
 
 def signup(request):
     if request.method == 'POST':

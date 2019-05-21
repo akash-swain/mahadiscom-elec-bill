@@ -18,7 +18,7 @@ class MahdiscomElecBillDetail():
         """
         try:
             response = requests.post(self.url, data = self.cust_detail)
-            print (response.status_code)
+            # print (response.status_code)
             # print (dir(response))
         except Exception as e:
             print (f"{str(e)}")
@@ -37,5 +37,5 @@ class MahdiscomElecBillDetail():
 
 
 
-# aa = MahdiscomElecBillDetail("700006278711", "4703", "4")
-# print (aa.get_bill_detail())
+aa = MahdiscomElecBillDetail("700006278711", "4703", "4")
+print (aa.get_bill_detail())
