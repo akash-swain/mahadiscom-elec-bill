@@ -2,19 +2,24 @@ from bs4 import BeautifulSoup as bs
 import requests
 from time import sleep, time
 import json
+from concurrent.futures import ThreadPoolExecutor
+
 
 
 class GetNmmcPropertyBill:
-    def __init__(self, consumerNo):
-        self.url = "https://www.nmmc.gov.in/property-tax2/-/property?_onlinepropertypayment_WAR_NMMCProjectportlet_action=porpertyTax"
-        self.params = {}
-        self.params["propertyCode"] = consumerNo
-        self.consumerNo = consumerNo
 
-    def getpropertybill(self):
+
+    def call_parallel_property(self, customer_list):
+        with ThreadPoolExecutor(max_workers = 4) as executor:
+            return executor.map(self.getpropertybill, customer_list)
+
+    def getpropertybill(self, consumerNo):
+        url = "https://www.nmmc.gov.in/property-tax2/-/property?_onlinepropertypayment_WAR_NMMCProjectportlet_action=porpertyTax"
+        params = {}
+        params["propertyCode"] = consumerNo
 
         try:
-            response = requests.post(self.url, data=self.params)
+            response = requests.post(url, data=params)
         except Exception as e:
             content = ""
             return f"exception raised: {str(e)}"
@@ -37,7 +42,7 @@ class GetNmmcPropertyBill:
                     jdata = json.dumps(dict(table_data))
                     jdata = eval(jdata)
                     jdata = {str(k).replace(" ", "").replace(":",""):v for k, v in jdata.items()}
-                    jdata["ConsumerNumberProperty"] = self.consumerNo
+                    jdata["ConsumerNumberProperty"] = consumerNo
                     # print (jdata)
                     # for k, v in jdata.items():
                     #     print (str(k).replace(" ", "").replace(":",""),v)
@@ -49,9 +54,11 @@ class GetNmmcPropertyBill:
     #     if table.findParent("table") is None:
     #         print(str(table))
 
-start_time = time()
+# start_time = time()
 # prop_list = ["AI0000447039", "AI0000391342", "AI0000391318", "AI0000386076"]
 
-# for prop in prop_list:
-#     a = GetNmmcPropertyBill(prop)
-#     print (a.getpropertybill())
+# a = GetNmmcPropertyBill()
+# aa = a.call_parallel_property(prop_list)
+# for i in aa:
+#     print (i)
+# print (time() - start_time)

@@ -2,6 +2,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from MahadiscomElecBill import MahdiscomElecBillDetail
+from MahadiscomElecBillParallel import MahdiscomElecBillDetail as mad
 from NmmcWaterBill import GetNmmcWaterBill
 from NmmcTaxBill import GetNmmcPropertyBill
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -71,39 +72,45 @@ class BillList(LoginRequiredMixin,ListView):
             # print (bu_list)
         t = []
         total_bill = 0
-        for cust in self.customers:
-            obj_bill = MahdiscomElecBillDetail(cust, "4641", "4")
-            data = obj_bill.get_bill_detail()
-            try:
-                total_bill += data.get("netPPDAmount", 0)
-                t.append(data)
-            except Exception as e:
-                total_bill = 0
+        # for cust in self.customers:
+        #     obj_bill = MahdiscomElecBillDetail(cust, "4641", "4")
+        #     data = obj_bill.get_bill_detail()
+        #     try:
+        #         total_bill += data.get("netPPDAmount", 0)
+        #         t.append(data)
+        #     except Exception as e:
+        #         total_bill = 0
+        obj_bill = mad()
+        t = list(obj_bill.call_parallel_elec(self.customers))
         
         # water bill fetch
         w = []
         total_bill_water = 0
-        for cust in self.customer_water:
-            obj_bill_water = GetNmmcWaterBill(cust)
-            data_water = obj_bill_water.getwaterbill()
-            try:
-                total_bill_water += float(data_water.get("Outstanding", 0))
-                w.append(data_water)
-            except Exception as e:
-                total_bill_water = 0
+        # for cust in self.customer_water:
+        #     obj_bill_water = GetNmmcWaterBill(cust)
+        #     data_water = obj_bill_water.getwaterbill()
+        #     try:
+        #         total_bill_water += float(data_water.get("Outstanding", 0))
+        #         w.append(data_water)
+        #     except Exception as e:
+        #         total_bill_water = 0
+        obj_bill_water = GetNmmcWaterBill()
+        w = list(obj_bill_water.call_parallel_water(self.customer_water))
 
 
         # property bill fetch
         p = []
         total_bill_property = 0
-        for cust in self.customer_property:
-            obj_bill_property = GetNmmcPropertyBill(cust)
-            data_property = obj_bill_property.getpropertybill()
-            try:
-                total_bill_property += float(data_property.get("Outstanding", 0))
-                p.append(data_property)
-            except Exception as e:
-                total_bill_property = 0
+        # for cust in self.customer_property:
+        #     obj_bill_property = GetNmmcPropertyBill(cust)
+        #     data_property = obj_bill_property.getpropertybill()
+        #     try:
+        #         total_bill_property += float(data_property.get("Outstanding", 0))
+        #         p.append(data_property)
+        #     except Exception as e:
+        #         total_bill_property = 0
+        obj_bill_property = GetNmmcPropertyBill()
+        p = list(obj_bill_property.call_parallel_property(self.customer_property))
 
         # print (t)
         context["data"] = t
@@ -149,8 +156,8 @@ class BillList(LoginRequiredMixin,ListView):
                 area = request.POST["area"]
                 check_in_current = ConDetail.objects.get(consumerno = post_data, consumer = user)
             except ConDetail.DoesNotExist:
-                obj_bill = MahdiscomElecBillDetail(post_data, area, "4")
-                data = obj_bill.get_bill_detail()
+                obj_bill = MahdiscomElecBillDetailParallel()
+                data = obj_bill.get_bill_detail(post_data)
                 if data:
                     user = get_object_or_404(User, username=self.request.user.username)
                     c1 = ConDetail(consumerno = post_data, consumer = user)
@@ -171,8 +178,9 @@ class BillList(LoginRequiredMixin,ListView):
                 post_data = request.POST["content_water"]
                 check_in_current = ConDetailWater.objects.get(consumerno = post_data, consumer = user)
             except ConDetailWater.DoesNotExist:
-                obj_bill_water = GetNmmcWaterBill(post_data)
-                data = obj_bill_water.getwaterbill()
+                # obj_bill_water = GetNmmcWaterBill(post_data)
+                obj_bill_water = GetNmmcWaterBill()
+                data = obj_bill_water.getwaterbill(post_data)
                 if data:
                     user = get_object_or_404(User, username=self.request.user.username)
                     c1 = ConDetailWater(consumerno = post_data, consumer = user)
@@ -193,8 +201,8 @@ class BillList(LoginRequiredMixin,ListView):
                 post_data = request.POST["content_property"]
                 check_in_current = ConDetailProperty.objects.get(consumerno = post_data, consumer = user)
             except ConDetailProperty.DoesNotExist:
-                obj_bill_property = GetNmmcPropertyBill(post_data)
-                data = obj_bill_property.getpropertybill()
+                obj_bill_property = GetNmmcPropertyBill()
+                data = obj_bill_property.getpropertybill(post_data)
                 if data:
                     user = get_object_or_404(User, username=self.request.user.username)
                     c1 = ConDetailProperty(consumerno = post_data, consumer = user)
